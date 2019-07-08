@@ -1,4 +1,5 @@
 import cv2
+import cv2
 import numpy as np
 import math
 import time
@@ -10,6 +11,24 @@ count=0
 #import matplotlib.pyplot as plt
 from scipy.spatial import distance
 cap = cv2.VideoCapture(0)
+
+def nothing(x):
+    pass
+# h-색,s-채,v-명 sv(클수록 진하고 밝음)
+
+cv2.namedWindow('skin_hsv')
+cv2.createTrackbar('lower_h','skin_hsv',0,255,nothing)
+cv2.createTrackbar('upper_h','skin_hsv',0,255,nothing)
+cv2.createTrackbar('lower_s','skin_hsv',0,255,nothing)
+cv2.createTrackbar('upper_s','skin_hsv',0,255,nothing)
+cv2.createTrackbar('lower_v','skin_hsv',0,255,nothing)
+cv2.createTrackbar('upper_v','skin_hsv',0,255,nothing)
+cv2.setTrackbarPos('lower_h','skin_hsv',0)
+cv2.setTrackbarPos('upper_h','skin_hsv',20)
+cv2.setTrackbarPos('lower_s','skin_hsv',105)
+cv2.setTrackbarPos('upper_s','skin_hsv',255)
+cv2.setTrackbarPos('lower_v','skin_hsv',40)
+cv2.setTrackbarPos('upper_v','skin_hsv',220)
 
 while(1):
     try:  #an error comes if it does not find anything in window as it cannot find contour of max area
@@ -31,12 +50,16 @@ while(1):
         #roi 범위 안의 색영역추출
         hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
 
-
-
+        l_skinh=cv2.getTrackbarPos('lower_h','skin_hsv')
+        u_skinh=cv2.getTrackbarPos('upper_h','skin_hsv')
+        l_skins=cv2.getTrackbarPos('lower_s','skin_hsv')
+        u_skins=cv2.getTrackbarPos('upper_s','skin_hsv')
+        l_skinv=cv2.getTrackbarPos('lower_v','skin_hsv')
+        u_skinv=cv2.getTrackbarPos('upper_v','skin_hsv')
     # 추출한 색영역과 비교할 범위 (살색) [색범위,채도,명암]
 
-        lower_skin = np.array([0,105,40], dtype=np.uint8)
-        upper_skin = np.array([20,255,220], dtype=np.uint8)
+        lower_skin = np.array([l_skinh,l_skins,l_skinv], dtype=np.uint8)
+        upper_skin = np.array([u_skinh,u_skins,u_skinv], dtype=np.uint8)
 
      # 추출한 색영역 hsv가 살색 범위만 남긴다.
         mask = cv2.inRange(hsv, lower_skin, upper_skin)
